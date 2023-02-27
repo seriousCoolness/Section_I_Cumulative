@@ -24,8 +24,7 @@ class Story {
   /** Parses hostname out of URL and returns it. */
 
   getHostName() {
-    // UNIMPLEMENTED: complete this function!
-    return "hostname.com";
+    return this.url.split("://").pop().split("/").shift();
   }
 }
 
@@ -73,8 +72,34 @@ class StoryList {
    * Returns the new Story instance
    */
 
-  async addStory( /* user, newStory */) {
-    // UNIMPLEMENTED: complete this function!
+  async addStory(user, newStory) {
+    const token = user.loginToken;
+    const {title, author, url} = newStory;
+    
+    const res = await axios({
+      method: "POST",
+      url: `${BASE_URL}/stories`,
+      data: { token, story: { title, author, url } },
+    });
+
+    const resStory = new Story(res.data.story);
+    this.stories.unshift(resStory);
+    user.ownStories.unshift(resStory);
+    return resStory;
+  }
+
+  async removeStory(user, storyId) {
+    const token = user.loginToken;
+
+    const res = await axios({
+      method: "DELETE",
+      url: `${BASE_URL}/stories/${storyId}`,
+      data: { token }
+    });
+    console.log(res.data.message);
+
+    this.stories = this.stories.filter((story) => {return story.storyId != storyId;});
+    user.ownStories = user.ownStories.filter((story) => {return story.storyId != storyId;});
   }
 }
 
@@ -107,6 +132,82 @@ class User {
 
     // store the login token on the user so it's easy to find for API calls.
     this.loginToken = token;
+  }
+
+  isOwner(storyId) {
+    let equal = false;
+    currentUser.ownStories.forEach((story) => {
+      if(storyId == story.storyId) {
+        equal = true;
+      }
+    });
+    return equal;
+  }
+
+  /** Register new favorite for user 
+   * 
+  */
+  async addFavorite(storyId) {
+    
+    const res = await axios({
+      method: "POST",
+      url: `${BASE_URL}/users/${this.username}/favorites/${storyId}`,
+      data: { token: this.loginToken },
+    });
+    console.debug(res.data.message);
+
+    const { user } = res.data;
+
+    this.favorites = user.favorites;
+
+    return new User(
+      {
+        username: user.username,
+        name: user.name,
+        createdAt: user.createdAt,
+        favorites: user.favorites,
+        ownStories: user.stories
+      },
+      this.loginToken
+    );
+  }
+
+  isFavorite(storyId) {
+    let equal = false;
+    currentUser.favorites.forEach((story) => {
+      if(storyId == story.storyId) {
+        equal = true;
+      }
+    });
+    return equal;
+  }
+
+  /** Remove new favorite for user 
+   * 
+  */
+  async removeFavorite(storyId) {
+    
+    const res = await axios({
+      method: "DELETE",
+      url: `${BASE_URL}/users/${this.username}/favorites/${storyId}`,
+      data: { token: this.loginToken },
+    });
+    console.debug(res.data.message);
+    
+    const { user } = res.data;
+
+    this.favorites = user.favorites;
+
+    return new User(
+      {
+        username: user.username,
+        name: user.name,
+        createdAt: user.createdAt,
+        favorites: user.favorites,
+        ownStories: user.stories
+      },
+      this.loginToken
+    );
   }
 
   /** Register new user in API, make User instance & return it.
@@ -177,7 +278,7 @@ class User {
       });
 
       let { user } = response.data;
-
+      console.log(user.favorites);
       return new User(
         {
           username: user.username,

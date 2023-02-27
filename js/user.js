@@ -111,6 +111,8 @@ function updateUIOnUserLogin() {
   console.debug("updateUIOnUserLogin");
 
   $allStoriesList.show();
+  updateStars($allStoriesList);
+  updateTrash($allStoriesList);
 
   updateNavOnLogin();
 }

@@ -37,3 +37,12 @@
 .story-user {
   display: block;
 }
+
+.story-form button {
+  width: 4rem;
+  margin-left: 80px;
+}
+
+.story-forms-container {
+  padding-left: 20px;
+}

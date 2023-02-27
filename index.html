@@ -37,12 +37,41 @@
   <div class="navbar-brand">
     <a class="nav-link" href="#" id="nav-all">Hack or Snooze</a>
   </div>
+  <div class="nav">
+    <a class="hidden" href="#" id="nav-favorites">favorites</a><b> | </b>
+    <a class="hidden" href="#" id="nav-story">submit</a><b> | </b>
+    <a class="hidden" href="#" id="nav-posts">your posts</a>
+  </div>
   <div class="nav-right">
+
     <a class="nav-link" href="#" id="nav-login">login/signup</a>
     <a class="nav-link" href="#" id="nav-user-profile"></a>
     <a class="hidden" id="nav-logout" href="#"><small>(logout)</small></a>
   </div>
 </nav>
+
+<!-- Story creation forms -->
+<section class="story-forms-container container">
+
+  <!-- Story creation form -->
+  <form action="#" id="story-form" class="story-form hidden" method="post">
+    <h4>Submit Story</h4>
+    <div class="story-input">
+      <label for="story-title">title</label>
+      <input id="story-title">
+    </div>
+    <div class="story-input">
+      <label for="story-author">author</label>
+      <input id="story-author" autocomplete="current-username">
+    </div>
+    <div class="story-input">
+      <label for="story-link">url</label>
+      <input id="story-link" type="url">
+    </div>
+    <button type="submit">post</button>
+    <hr>
+  </form>
+</section>
 
 <!-- area for stories (all stories, user stories, favorites) -->
 <section class="stories-container container">
@@ -52,6 +81,12 @@
 
   <!-- List of all stories -->
   <ol id="all-stories-list" class="stories-list"></ol>
+
+  <!-- List favorite stories -->
+  <ol id="favorite-stories-list" class="stories-list hidden"></ol>
+
+  <!-- List own posted stories -->
+  <ol id="posted-stories-list" class="stories-list hidden"></ol>
 
 </section>
 
